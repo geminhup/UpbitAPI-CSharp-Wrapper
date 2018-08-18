@@ -76,25 +76,25 @@ namespace UpbitAPI_CS_Wrapper
             string url = "https://api.upbit.com/v1/orders/chance";
             return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
         }
-        public string GetCandles_Minute(string market, UpbitMinuteCandleType unit)
+        public string GetCandles_Minute(string market, UpbitMinuteCandleType unit, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/minutes/" + (int)unit;
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market} }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
         }
-        public string GetCandles_Day(string market)
+        public string GetCandles_Day(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/days";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
         }
-        public string GetCandles_Week(string market)
+        public string GetCandles_Week(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/weeks";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
         }
-        public string GetCandles_Month(string market)
+        public string GetCandles_Month(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/months";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
         }
         public string GetTicks(string market)
         {
@@ -176,7 +176,10 @@ namespace UpbitAPI_CS_Wrapper
             }
             return dic;
         }
-
+        private string DateTime2String(DateTime to)
+        {
+            return to.ToString("s") + "+09:00";
+        }
         public enum UpbitMinuteCandleType { _1 = 1, _3 = 3, _5 = 5, _10 = 10, _15 = 15, _30 = 30, _60 = 60, _240 = 240 }
         public enum UpbitOrderSide { ask, bid }
         public enum UpbitOrderType { limit }
