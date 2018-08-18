@@ -35,10 +35,10 @@ namespace UpbitAPI_CS_Wrapper
             Console.WriteLine(U.GetMarkets());
 
             // 캔들(분, 일, 주, 월) 조회
-            Console.WriteLine(U.GetCandles_Minute("KRW-BTC", UpbitAPI.UpbitMinuteCandleType._1));
-            Console.WriteLine(U.GetCandles_Day("KRW-BTC"));
-            Console.WriteLine(U.GetCandles_Week("KRW-BTC"));
-            Console.WriteLine(U.GetCandles_Month("KRW-BTC"));
+            Console.WriteLine(U.GetCandles_Minute("KRW-BTC", UpbitAPI.UpbitMinuteCandleType._1, to: DateTime.Now.AddMinutes(-2), count: 2));
+            Console.WriteLine(U.GetCandles_Day("KRW-BTC", to: DateTime.Now.AddDays(-2), count: 2));
+            Console.WriteLine(U.GetCandles_Week("KRW-BTC", to: DateTime.Now.AddDays(-14), count: 2));
+            Console.WriteLine(U.GetCandles_Month("KRW-BTC", to: DateTime.Now.AddMonths(-2), count: 2));
 
             // 당일 체결 내역 조회
             Console.WriteLine(U.GetTicker("KRW-BTC,KRW-ETH"));
