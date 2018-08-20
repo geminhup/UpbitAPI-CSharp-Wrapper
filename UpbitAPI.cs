@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -21,111 +20,123 @@ namespace UpbitAPI_CS_Wrapper
 
         public class MyHttpClient : HttpClient
         {
-            public string accessKey;
-            public string secretKey;
-
+            private string _accessKey;
+            public string AccessKey
+            {
+                get { return _accessKey; }
+                set { _accessKey = value; }
+            }
+            private string _secretKey;
+            public string SecretKey
+            {
+                get { return _secretKey; }
+                set { _secretKey = value; }
+            }
             public MyHttpClient(string accessKey, string secretKey)
             {
-                this.accessKey = accessKey;
-                this.secretKey = secretKey;
+                if (string.IsNullOrWhiteSpace(accessKey)) { throw new ArgumentNullException("accessKey"); }
+                if (string.IsNullOrWhiteSpace(secretKey)) { throw new ArgumentNullException("secretKey"); }
+                _accessKey = accessKey;
+                _secretKey = secretKey;
             }
         }
 
         public string GetAccount()
         {
             string url = "https://api.upbit.com/v1/accounts";
-            return CallAPI_NoParam(url, HttpMethod.Get).Result;
+            return CallAPI_NoParam(url, HttpMethod.Get);
         }
         public string GetTicker(string markets)
         {
             string url = "https://api.upbit.com/v1/ticker";
-            return CallAPI_WithParam(url, new NameValueCollection { { "markets", markets} }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "markets", markets } }, HttpMethod.Get);
         }
         public string GetMarkets()
         {
             string url = "https://api.upbit.com/v1/market/all";
-            return CallAPI_NoParam(url, HttpMethod.Get).Result;
+            return CallAPI_NoParam(url, HttpMethod.Get);
         }
         public string GetAllOrder()
         {
             string url = "https://api.upbit.com/v1/orders";
-            return CallAPI_NoParam(url, HttpMethod.Get).Result;
+            return CallAPI_NoParam(url, HttpMethod.Get);
         }
         public string GetOrder(string uuid)
         {
             string url = "https://api.upbit.com/v1/order";
-            return CallAPI_WithParam(url, new NameValueCollection { { "uuid", uuid } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "uuid", uuid } }, HttpMethod.Get);
         }
         public string MakeOrder(string market, UpbitOrderSide side, decimal volume, decimal price, UpbitOrderType ord_type = UpbitOrderType.limit)
         {
             string url = "https://api.upbit.com/v1/orders";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "side", side.ToString()}, { "volume", volume.ToString() }, { "price", price.ToString() }, { "ord_type", ord_type.ToString() } }, HttpMethod.Post).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "side", side.ToString() }, { "volume", volume.ToString() }, { "price", price.ToString() }, { "ord_type", ord_type.ToString() } }, HttpMethod.Post);
         }
         public string CancelOrder(string uuid)
         {
             string url = "https://api.upbit.com/v1/order";
-            return CallAPI_WithParam(url, new NameValueCollection { { "uuid", uuid} }, HttpMethod.Delete).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "uuid", uuid } }, HttpMethod.Delete);
         }
         public string GetOrderbook(string markets)
         {
             string url = "https://api.upbit.com/v1/orderbook";
-            return CallAPI_WithParam(url, new NameValueCollection { { "markets", markets } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "markets", markets } }, HttpMethod.Get);
         }
         public string GetOrderChance(string market)
         {
             string url = "https://api.upbit.com/v1/orders/chance";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get);
         }
+
         public string GetCandles_Minute(string market, UpbitMinuteCandleType unit, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/minutes/" + (int)unit;
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
         public string GetCandles_Day(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/days";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
         public string GetCandles_Week(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/weeks";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
         public string GetCandles_Month(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/candles/months";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
-        public string GetTicks(string market)
+        public string GetTicks(string market, DateTime to = default(DateTime), int count = 1)
         {
             string url = "https://api.upbit.com/v1/trades/ticks";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market } }, HttpMethod.Get).Result;
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
 
-        async public Task<string> CallAPI_NoParam(string url, HttpMethod httpMethod)
+        private string CallAPI_NoParam(string url, HttpMethod httpMethod)
         {
             var requestMessage = new HttpRequestMessage(httpMethod, new Uri(url));
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", JWT_NoParameter());
-            var response = await httpClient.SendAsync(requestMessage);
-            var contents = await response.Content.ReadAsStringAsync();
+            var response = httpClient.SendAsync(requestMessage).Result;
+            var contents = response.Content.ReadAsStringAsync().Result;
             return contents;
         }
-        async public Task<string> CallAPI_WithParam(string url, NameValueCollection nvc, HttpMethod httpMethod)
+        private string CallAPI_WithParam(string url, NameValueCollection nvc, HttpMethod httpMethod)
         {
             Dictionary<string, string> dic = Nvc2Dictionary(nvc);
             var requestMessage = new HttpRequestMessage(httpMethod, new Uri(url + ToQueryString(nvc)));
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", JWT_WithParameter(dic));
-            var response = await httpClient.SendAsync(requestMessage);
-            var contents = await response.Content.ReadAsStringAsync();
+            var response = httpClient.SendAsync(requestMessage).Result;
+            var contents = response.Content.ReadAsStringAsync().Result;
             return contents;
         }
 
-        string JWT_NoParameter()
+        private string JWT_NoParameter()
         {
             TimeSpan diff = DateTime.Now - new DateTime(1970, 1, 1);
             var nonce = Convert.ToInt64(diff.TotalMilliseconds);
-            var payload = new JwtPayload { { "access_key", httpClient.accessKey }, { "nonce", nonce } };
-            byte[] keyBytes = Encoding.Default.GetBytes(httpClient.secretKey);
+            var payload = new JwtPayload { { "access_key", httpClient.AccessKey }, { "nonce", nonce } };
+            byte[] keyBytes = Encoding.Default.GetBytes(httpClient.SecretKey);
             var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(keyBytes);
             var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, "HS256");
             var header = new JwtHeader(credentials);
@@ -135,7 +146,7 @@ namespace UpbitAPI_CS_Wrapper
             var authorizationToken = jwtToken;
             return authorizationToken;
         }
-        string JWT_WithParameter(Dictionary<string, string> parameters)
+        private string JWT_WithParameter(Dictionary<string, string> parameters)
         {
             TimeSpan diff = DateTime.Now - new DateTime(1970, 1, 1);
             var nonce = Convert.ToInt64(diff.TotalMilliseconds);
@@ -147,8 +158,8 @@ namespace UpbitAPI_CS_Wrapper
             }
             string queryString = builder.ToString().TrimEnd('&');
 
-            var payload = new JwtPayload { { "access_key", httpClient.accessKey }, { "nonce", nonce }, { "query", queryString } };
-            byte[] keyBytes = Encoding.Default.GetBytes(httpClient.secretKey);
+            var payload = new JwtPayload { { "access_key", httpClient.AccessKey }, { "nonce", nonce }, { "query", queryString } };
+            byte[] keyBytes = Encoding.Default.GetBytes(httpClient.SecretKey);
             var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(keyBytes);
             var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, "HS256");
             var header = new JwtHeader(credentials);
@@ -167,7 +178,7 @@ namespace UpbitAPI_CS_Wrapper
                 .ToArray();
             return "?" + string.Join("&", array);
         }
-        static Dictionary<string, string> Nvc2Dictionary(NameValueCollection nvc)
+        private static Dictionary<string, string> Nvc2Dictionary(NameValueCollection nvc)
         {
             Dictionary<string, string> dic = new Dictionary<string, string> { };
             foreach (string key in nvc)
