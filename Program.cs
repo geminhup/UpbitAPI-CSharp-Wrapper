@@ -41,11 +41,11 @@ namespace UpbitAPI_CS_Wrapper
             Console.WriteLine(U.GetCandles_Month("KRW-BTC", to: DateTime.Now.AddMonths(-2), count: 2));
 
             // 당일 체결 내역 조회
-            Console.WriteLine(U.GetTicker("KRW-BTC,KRW-ETH"));
+            Console.WriteLine(U.GetTicks("KRW-BTC", count: 2));
 
             // 현재가 정보 조회
-            Console.WriteLine(U.GetTicks("KRW-BTC"));
-
+            Console.WriteLine(U.GetTicker("KRW-BTC,KRW-ETH"));
+            
             // 시세 호가 정보(Orderbook) 조회
             Console.WriteLine(U.GetOrderbook("KRW-BTC,KRW-ETH"));
             #endregion
