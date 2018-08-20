@@ -107,10 +107,10 @@ namespace UpbitAPI_CS_Wrapper
             string url = "https://api.upbit.com/v1/candles/months";
             return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
         }
-        public string GetTicks(string market, DateTime to = default(DateTime), int count = 1)
+        public string GetTicks(string market, int count = 1)
         {
             string url = "https://api.upbit.com/v1/trades/ticks";
-            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "to", (to == default(DateTime)) ? DateTime2String(DateTime.Now) : DateTime2String(to) }, { "count", count.ToString() } }, HttpMethod.Get);
+            return CallAPI_WithParam(url, new NameValueCollection { { "market", market }, { "count", count.ToString() } }, HttpMethod.Get);
         }
 
         private string CallAPI_NoParam(string url, HttpMethod httpMethod)
