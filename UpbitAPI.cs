@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -123,9 +122,8 @@ namespace UpbitAPI_CS_Wrapper
         }
         private string CallAPI_WithParam(string url, NameValueCollection nvc, HttpMethod httpMethod)
         {
-            Dictionary<string, string> dic = Nvc2Dictionary(nvc);
-            var requestMessage = new HttpRequestMessage(httpMethod, new Uri(url + ToQueryString(nvc)));
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", JWT_WithParameter(dic));
+            var requestMessage = new HttpRequestMessage(httpMethod, new Uri(url + "?" + ToQueryString(nvc, true)));
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", JWT_WithParameter(nvc));
             var response = httpClient.SendAsync(requestMessage).Result;
             var contents = response.Content.ReadAsStringAsync().Result;
             return contents;
@@ -146,18 +144,12 @@ namespace UpbitAPI_CS_Wrapper
             var authorizationToken = jwtToken;
             return authorizationToken;
         }
-        private string JWT_WithParameter(Dictionary<string, string> parameters)
+        private string JWT_WithParameter(NameValueCollection nvc)
         {
             TimeSpan diff = DateTime.Now - new DateTime(1970, 1, 1);
             var nonce = Convert.ToInt64(diff.TotalMilliseconds);
 
-            StringBuilder builder = new StringBuilder();
-            foreach (KeyValuePair<string, string> pair in parameters)
-            {
-                builder.Append(pair.Key).Append("=").Append(pair.Value).Append("&");
-            }
-            string queryString = builder.ToString().TrimEnd('&');
-
+            string queryString = ToQueryString(nvc, false);
             var payload = new JwtPayload { { "access_key", httpClient.AccessKey }, { "nonce", nonce }, { "query", queryString } };
             byte[] keyBytes = Encoding.Default.GetBytes(httpClient.SecretKey);
             var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(keyBytes);
@@ -169,23 +161,13 @@ namespace UpbitAPI_CS_Wrapper
             var authorizationToken = jwtToken;
             return authorizationToken;
         }
-
-        private string ToQueryString(NameValueCollection nvc)
+        private string ToQueryString(NameValueCollection nvc, bool isURI)
         {
             var array = (from key in nvc.AllKeys
                          from value in nvc.GetValues(key)
-                         select string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(value)))
+                         select string.Format("{0}={1}", (isURI) ? HttpUtility.UrlEncode(key) : key, (isURI) ? HttpUtility.UrlEncode(value) : value))
                 .ToArray();
-            return "?" + string.Join("&", array);
-        }
-        private static Dictionary<string, string> Nvc2Dictionary(NameValueCollection nvc)
-        {
-            Dictionary<string, string> dic = new Dictionary<string, string> { };
-            foreach (string key in nvc)
-            {
-                dic.Add(key, nvc[key]);
-            }
-            return dic;
+            return string.Join("&", array);
         }
         private string DateTime2String(DateTime to)
         {
@@ -194,6 +176,5 @@ namespace UpbitAPI_CS_Wrapper
         public enum UpbitMinuteCandleType { _1 = 1, _3 = 3, _5 = 5, _10 = 10, _15 = 15, _30 = 30, _60 = 60, _240 = 240 }
         public enum UpbitOrderSide { ask, bid }
         public enum UpbitOrderType { limit }
-
     }
 }
